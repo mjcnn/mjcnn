@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @mjcnn
 - 👀 I’m interested in plenty of things
-- 🌱 I’m currently learning my net.
+- 🌱 My net is currently planning to learn.
 - 💞️ I’m looking forward!
 - 📫 How to reach me?
 
