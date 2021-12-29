@@ -91,7 +91,11 @@ public class Perceptron {
     		Array1DF weights = filter.getWeightAsVector(d);
     		for (int k = 0; k < idx.length(); k++) {
     	    	//System.out.println("Convolute Simple : w="+weights[k]+" i="+input[d][idx[k]]);
-    			aggregate += weights.get(k) * input.get(d, idx.get(k));
+    			float in;
+    			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+    				in = input.get(idx.get(k));
+    			else in = input.get(d, idx.get(k));
+    			aggregate += weights.get(k) * in;
     		}
     	}
     	return aggregate;
@@ -119,9 +123,19 @@ public class Perceptron {
     	assert (d == idx_depth);
 
     	int k = 0;
-    	float aggregate = input.get(d, idx.get(k));
+		float inp;
+		if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+			inp = input.get(idx.get(k));
+		else inp = input.get(d, idx.get(k));
+		
+    	float aggregate = inp;
     	for ( k++ ; k < idx.length(); k++) {
-    		aggregate = Math.max(input.get(d, idx.get(k)), aggregate);
+			float in;
+			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+				in = input.get(idx.get(k));
+			else in = input.get(d, idx.get(k));
+    		
+    		aggregate = Math.max(in, aggregate);
     	}
     	return aggregate;
     }
@@ -136,8 +150,13 @@ public class Perceptron {
     	int d = filter.getOutputLayer();
     	assert (d == idx_depth);
     	for (int k = 0; k < idx.length(); k++) {
-    			aggregate += input.get(d, idx.get(k));
-    			count ++;
+			float in;
+			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+				in = input.get(idx.get(k));
+			else in = input.get(d, idx.get(k));
+    		
+    		aggregate += in;
+    		count ++;
     	}
     	return aggregate/count;
     }
@@ -153,10 +172,22 @@ public class Perceptron {
     	float aggregate = 0; 
     	for (int d = 0; d < filter.getDepth(); d ++) {
     		for (int k = 0; k < idx.length(); k++) {
-    			aggregate += Math.exp( input.get(d, idx.get(k)) );
+    			float in;
+    			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+    				in = input.get(idx.get(k));
+    			else in = input.get(d, idx.get(k));
+
+    			
+    			aggregate += Math.exp( in );
     		}
     	}
-    	return (float)Math.exp(input.get(idx_depth, 0))/aggregate;
+    	
+		float in;
+		if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+			in = input.get(0);
+		else in = input.get(idx_depth, 0);
+   	
+    	return (float)Math.exp(in)/aggregate;
     }
     public float convolute(Array2DF input) {
     	//System.out.print("type="+Config.CNNtype(type));
