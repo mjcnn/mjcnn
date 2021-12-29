@@ -27,4 +27,5 @@ interface Array2DF {
 	Array1DF get1DF(int x2);
 	float[] getDataFlat();
 	float[][] getData2D();
+	float get(int i);
 }
