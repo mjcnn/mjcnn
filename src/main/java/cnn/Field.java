@@ -150,6 +150,10 @@ class Array2DFfrom3D implements Array2DF {
 	public float[][] getData2D() {
 		throw new RuntimeException("Underlying data not 2D");
 		//return null;
+	}
+	@Override
+	public float get(int i) {
+		throw new RuntimeException("Underlying Data not 1D");
 	}	
 }
 
