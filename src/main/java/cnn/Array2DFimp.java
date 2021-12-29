@@ -34,7 +34,13 @@ class Array2DFimp implements Array2DF {
 		else data2 = new float[dim1][dim2];
 	}
 	public static float getV(float[] data, int x1, int dim1, int x2, int dim2) {
-		if (Config.FLAT_ARRAYS) return data[Field.getIndex(x1, dim1, x2, dim2)];
+		if (Config.FLAT_ARRAYS) {
+			int idx = Field.getIndex(x1, dim1, x2, dim2);
+			if (idx >= data.length || x1>=dim1 || x2>=dim2) {
+				System.out.println("getV: x1="+x1+" /dim1="+dim1+" x2="+x2+"/dim2="+dim2);
+			}
+			return data[Field.getIndex(x1, dim1, x2, dim2)];
+		}
 		else throw new RuntimeException("flat"); //return data2[x1][x2];
 	}
 	public static float setV(float[] data, int x1, int dim1, int x2, int dim2, float val) {
@@ -50,7 +56,7 @@ class Array2DFimp implements Array2DF {
 		if (Config.FLAT_ARRAYS) return setV(data, x1, dim1, x2, dim2, val);
 		else return (data2[x1][x2] = val);
 	}
-	
+
 	
 	public int length_1() {return dim1;}
 	public int length_2() {return dim2;}
@@ -66,5 +72,10 @@ class Array2DFimp implements Array2DF {
 	@Override
 	public float[][] getData2D() {
 		return data2;
+	}
+	@Override
+	public float get(int i) {
+		if (data != null) return data[i];
+		throw new RuntimeException("FLAT_INDEXES not implemented");
 	}	
 }
