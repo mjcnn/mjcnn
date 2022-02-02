@@ -1,5 +1,7 @@
 Main Java Convolutional Neural Network (MJCNN)
 
+License: This is free open source software released under Afero GPL.
+
 This is a Java CNN implementation, which is somewhat optimized with Aparapi GPU support. It was not designed dreaming that it would be fast enough for training, but rather for classification with previously trained weights, to be used in apps.
 
 MJCNN supports loading of CNN structures and of trained weights from JSON files that are compatible with data easily obtainable from VGG16 h5 files (the corresponding scripts are provided).
