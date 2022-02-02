@@ -1,4 +1,4 @@
-M's Java Convolutional Neural Network (MJCNN)
+Main Java Convolutional Neural Network (MJCNN)
 
 This is a Java CNN implementation, which is somewhat optimized with Aparapi GPU support. It was not designed dreaming that it would be fast enough for training, but rather for classification with previously trained weights, to be used in apps.
 
