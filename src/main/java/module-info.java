@@ -1,4 +1,4 @@
-
+/*
 module CNN {
 	opens cnn;
 	requires org.junit.jupiter.api;
@@ -6,5 +6,5 @@ module CNN {
 	requires aparapi;
 	requires org.junit.platform.commons;
 }
-
+*/
                                                                                                                    
