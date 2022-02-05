@@ -24,6 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import cnn.Config.LayerConfig;
+import cnn.util.Array2DF;
+import cnn.util.Array2DFimp;
+import cnn.util.Array3DF;
 import json.JSONTree;
 import json.JSONTree.Item;
 import json.JSONTree.Node;
@@ -31,12 +34,13 @@ import json.JSONTree.Node;
 public class CNN {
 	Array2DF input;      // [d][w x h]
 	Array2DF output;     // [d][w x h]
+	
 	Array2DF hidden[];   // [l][d][w x h]
 
 	Array2DF biases []; // level.depth.1
 	Array3DF weights []; // level.o_depth.i_depth.idx
 
-	Layer layer[];
+	LayerStub layer[]; // may make layer/filter/biases/weights/hidden an ArrayList to enable easy manipulation
 	Filter[][] filter;
 	int layersNb;
 
@@ -144,9 +148,9 @@ public class CNN {
 										Node dimspace = (Node) dataspace.values.get(1);
 										// * for (float f: dimspace.floatArray)  System.out.println("  "+f);
 
-										assert (dimspace.floatArray[dimspace.floatArray.length - 1] == layer[crt_layer].D_output);
+										assert (dimspace.floatArray[dimspace.floatArray.length - 1] == layer[crt_layer].getDepth_output());
 										//crt_fil.length);
-										assert (dimspace.floatArray[dimspace.floatArray.length - 2] == layer[crt_layer].D_input);
+										assert (dimspace.floatArray[dimspace.floatArray.length - 2] == layer[crt_layer].getDepth_input());
 										// crt_fil[0].getDepth());
 										
 										assert("DATA".equals(n_hdf5_group_grup_group_dataset_content.values.get(2)));
@@ -172,8 +176,8 @@ public class CNN {
 											// TODO: could be guessed by classifying an image and its transpose
 											for (int i1 = 0; i1 < crt_fil[0].getX(); i1 ++) {
 												for (int i2 = 0; i2 < crt_fil[0].getY(); i2 ++) {
-													for (int i3 = 0; i3 < layer[crt_layer].D_input; i3 ++) {
-														for (int i4 = 0; i4 < layer[crt_layer].D_output; i4 ++) {
+													for (int i3 = 0; i3 < layer[crt_layer].getDepth_input(); i3 ++) {
+														for (int i4 = 0; i4 < layer[crt_layer].getDepth_output(); i4 ++) {
 															crt_fil[i4].setWeight(i1, i2, i3, data.floatArray[src++]);
 														}													
 													}													
@@ -241,11 +245,13 @@ public class CNN {
 	 */
 	public void setInput(Array2DF input) {
 		this.input = input;
-		layer[0].input = input;
+		layer[0].setInput(input);
 	}
 	public Array2DF classify_with_CPU() {
-		for (int l = 0; l < layer.length; l ++)
+		for (int l = 0; l < layer.length; l ++) {
+			System.out.println("CPU Level="+l);
 			layer[l].convolute_with_CPU();
+		}
 		return output;
 	}
 
@@ -256,8 +262,8 @@ public class CNN {
 	}
 	
 	public void set_weights_in_GPU_kernels() {
-		for (Layer l: layer) {
-			l.update_weights();
+		for (LayerStub l: layer) {
+			if (l.usesGPU()) l.update_GPU_weights();
 		}
 	}
 	
@@ -266,7 +272,7 @@ public class CNN {
 		this.input = input;
 		this.output = output;
 		
-		layer = new Layer[config.length - 1]; // the perceptrons, no perceptrons for input
+		layer = new LayerStub[config.length - 1]; // the perceptrons, no perceptrons for input
 		filter = new Filter[layer.length][];
 		
 		int hiddens = config.length;
@@ -296,7 +302,7 @@ public class CNN {
 			
 			
 			layer[l] =
-					new Layer(hidden[l], config[l].Xo, config[l].Yo, config[l].Do,
+					new LayerStub(hidden[l], config[l].Xo, config[l].Yo, config[l].Do,
 							hidden[l+1], config[l+1].Xo, config[l+1].Yo, config[l+1].Do,
 							config[l+1].px, config[l+1].py,
 							config[l+1].stride, config[l+1].dilation,

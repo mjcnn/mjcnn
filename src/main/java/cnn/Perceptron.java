@@ -19,6 +19,10 @@
 /* ------------------------------------------------------------------------- */
 package cnn;
 
+import cnn.util.Array1DF;
+import cnn.util.Array1DI;
+import cnn.util.Array2DF;
+
 public class Perceptron {
     Filter filter;
     Array1DI idx;
@@ -41,7 +45,7 @@ public class Perceptron {
      * @param init_indexes: Should we init the indexes here?
      */
     public Perceptron(Filter _filter, int D_i, int x_center, int X, int y_center, int Y, int dilation, int type, int O_depth, 
-    		Array1DI indexes, boolean init_indexes) {
+    		Array1DI indexes, boolean init_indexes, boolean flat_input_depth) {
     	filter = _filter;
     	this.idx_depth = O_depth;
     	this.type = type;
@@ -55,8 +59,10 @@ public class Perceptron {
 	    			y += (1+dilation)
 	    			)
 	    	{
+	    		
 	    		if (y < 0) _y = 0; else _y = y;
 	    		if (y >= Y) _y = Y - 1;
+	    		
 	    		for (
 	    				int x = x_center - filter.x_half_low()*(1+dilation);
 	    				x < x_center + filter.x_half_high()*(1+dilation);
@@ -66,8 +72,15 @@ public class Perceptron {
 	    			if (x < 0) _x = 0; else _x = x;
 	    			if (x >= X) _x = X - 1;
 	    			
-	    			if (Config.FLAT_INDEXES && Config.FLAT_ARRAYS) idx.set(k ++,  Field.getIndex(O_depth, D_i, _x, X, _y, Y));
-	    			else idx.set(k ++,  Field.getIndex(_x, X, _y, Y));
+	    			if (Config.FLAT_INDEXES && Config.FLAT_ARRAYS) {
+	    				if (! flat_input_depth)
+	    					idx.set(k ++,  Field.getIndex(O_depth, D_i, _x, X, _y, Y));
+	    				else {
+	    					for (int d = 0; d < D_i; d ++)
+	    						idx.set(k ++,  Field.getIndex(d, D_i, _x, X, _y, Y));
+	    				}
+	    			} else
+	    				idx.set(k ++,  Field.getIndex(_x, X, _y, Y));
 	    		}
 	    	}
     	}
@@ -89,15 +102,19 @@ public class Perceptron {
     	float aggregate = filter.getBias();
     	for (int d = 0; d < filter.getDepth(); d ++) {
     		Array1DF weights = filter.getWeightAsVector(d);
-    		for (int k = 0; k < idx.length(); k++) {
-    	    	//System.out.println("Convolute Simple : w="+weights[k]+" i="+input[d][idx[k]]);
+    		for (int k = 0; k < idx.getLength(); k++) {
     			float in;
-    			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
+    			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS) {
+    				if (Config.DEBUG_CPU_PERCEPTRONS) {System.out.println("d="+d+" w="+weights.get(k));}
     				in = input.get(idx.get(k));
+    			}
     			else in = input.get(d, idx.get(k));
+    			if (Config.DEBUG_CPU_PERCEPTRONS) 
+    				System.out.println("Convolute Simple : w="+weights.get(k)+" i("+idx.get(k)+")="+in);
     			aggregate += weights.get(k) * in;
     		}
     	}
+    	if (Config.DEBUG_CPU_PERCEPTRONS) System.out.println("Convolute Simple Aggregate: a="+aggregate);
     	return aggregate;
     }
     
@@ -129,7 +146,7 @@ public class Perceptron {
 		else inp = input.get(d, idx.get(k));
 		
     	float aggregate = inp;
-    	for ( k++ ; k < idx.length(); k++) {
+    	for ( k++ ; k < idx.getLength(); k++) {
 			float in;
 			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
 				in = input.get(idx.get(k));
@@ -149,7 +166,7 @@ public class Perceptron {
     	int count = 0;
     	int d = filter.getOutputLayer();
     	assert (d == idx_depth);
-    	for (int k = 0; k < idx.length(); k++) {
+    	for (int k = 0; k < idx.getLength(); k++) {
 			float in;
 			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
 				in = input.get(idx.get(k));
@@ -171,7 +188,7 @@ public class Perceptron {
     public float convoluteSoftMax(Array2DF input) {
     	float aggregate = 0; 
     	for (int d = 0; d < filter.getDepth(); d ++) {
-    		for (int k = 0; k < idx.length(); k++) {
+    		for (int k = 0; k < idx.getLength(); k++) {
     			float in;
     			if (Config.FLAT_INDEXES_POOL && Config.FLAT_ARRAYS)
     				in = input.get(idx.get(k));

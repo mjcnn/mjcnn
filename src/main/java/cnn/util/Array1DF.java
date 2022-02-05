@@ -17,38 +17,11 @@
       along with this program; if not, write to the Free Software
       Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              */
 /* ------------------------------------------------------------------------- */
-package cnn;
+package cnn.util;
 
-/**
- * 
- * @author Marius Silaghi
- * Used for standardizing raster access in two dimensional rasters represented as one vector
- */
-public class Field {
-	/**
-	 * 
-	 * @param x
-	 * @param X: max dimension on x
-	 * @param y
-	 * @param Y: max dimension on y
-	 * @return
-	 */
-    public static int getIndex(int x, int X, int y, int Y) {
-	assert(0<=x && x<X && 0<=y && y<Y);
-	int idx = X*y + x;
-	// System.out.println(""+x+" "+y+" -> "+idx);
-	return idx;
-    }
-
-    public static int getIndex(int x, int X, int y, int Y, int z, int Z) {
-    	if (!(0<=x && x<X && 0<=y && y<Y && 0<=z && z<Z)) {
-    		System.out.println("x="+x+"/"+X+" y="+y+"/"+Y+" z="+z+"/"+Z);
-    	}
-    	assert(0<=x && x<X && 0<=y && y<Y && 0<=z && z<Z);
-    	int idx = X*(Y*z + y)+x;
-    	// System.out.println(""+x+" "+y+" -> "+idx);
-    	return idx;
-    }
-    
+public
+interface Array1DF {
+	float get(int x3);
+	float set(int x3, float val);
+	int getLength();
 }
-

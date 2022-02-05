@@ -36,8 +36,9 @@ public class Config {
     public static final int CONVOLUTION = 7;
     
     public static final boolean FLAT_ARRAYS = true;
-    public static final boolean FLAT_INDEXES = true;
-    public static final boolean FLAT_INDEXES_POOL = true; // pool perceptron use indexes for level 0
+    public static final boolean FLAT_INDEXES = false;
+    public static final boolean FLAT_INDEXES_POOL = false; // pool perceptron use indexes for level 0
+	public static final boolean DEBUG_CPU_PERCEPTRONS = true;
    
 	private static int CNNtype(String type) {
 		if ("INPUT".equals(type)) return Config.INPUT;

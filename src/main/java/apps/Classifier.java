@@ -19,8 +19,14 @@
 /* ------------------------------------------------------------------------- */
 package apps;
 
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+
+//import aparapi_layers.LayerAparapi;
 import cnn.*;
 import cnn.Config.LayerConfig;
+import cnn.util.Array2DF;
+import cnn.util.Array2DFimp;
 
 public class Classifier {
 	static public void main (String args[]) {
@@ -30,14 +36,26 @@ public class Classifier {
 			LayerConfig[] layers = Config.parseConfigVGG(null, args[0]);
 			Array2DF input = new Array2DFimp ( layers[0].Do, layers[0].Xo*layers[0].Yo );
 			Array2DF output = new Array2DFimp ( layers[layers.length-1].Do, layers[layers.length-1].Xo * layers[layers.length-1].Yo );
+			
+			//LayerStub.setLayerClass(LayerAparapi.class);
 
 			CNN net = new CNN(layers, input, output);
 			
 			net.loadWeightsVGG(null, args[1]);
 			
 			net.setInput(input);
-			net.classify_with_GPU();
-			//net.classify_with_CPU();
+			//net.classify_with_GPU();
+			net.classify_with_CPU();
+			
+			System.out.println("Output: "+output.get(0, 0));
+			/*
+			try {
+		        ForkJoinPool.commonPool().awaitTermination(60*10, TimeUnit.SECONDS);
+		     }
+		     catch (InterruptedException ex) {
+		        Thread.currentThread().interrupt();
+		     }
+			*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();

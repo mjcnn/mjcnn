@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import cnn.Array2DF;
-import cnn.Array2DFimp;
 import cnn.CNN;
 import cnn.Config;
 import cnn.Config.LayerConfig;
+import cnn.util.Array2DF;
+import cnn.util.Array2DFimp;
 
 class CNNTest {
 	private static final int INDEX_NOT_FOUND = -1;
@@ -150,8 +150,8 @@ class CNNTest {
 	// Array2DF result = net.classify_with_GPU();
 	Array2DF result = net.classify_with_CPU();
 	System.out.println("XOR:"+input.get(0, 0) +" ^ "+input. get(1, 0) );
-	for (int d = 0; d < result.length_1(); d ++) {
-		for (int r = 0; r < result.length_2(); r ++) {
+	for (int d = 0; d < result.getLength1(); d ++) {
+		for (int r = 0; r < result.getLength2(); r ++) {
 				System.out.print(result.get(d, r) + " ");
 		}
 		System.out.println(" ");
@@ -161,11 +161,12 @@ class CNNTest {
 	input.set (0, 0, 1); 
 	input.set (1, 0, 0); 
 	net.setInput(input);
-	result = net.classify_with_GPU();
-	//float[][] result = net.classify_with_CPU();
+	//result = net.classify_with_GPU();
+	//float[][] 
+	result = net.classify_with_CPU();
 	System.out.println("XOR:"+input.get(0, 0) +" ^ "+input. get(1, 0) );
-	for (int d = 0; d < result.length_1(); d ++) {
-		for (int r = 0; r < result.length_2(); r ++) {
+	for (int d = 0; d < result.getLength1(); d ++) {
+		for (int r = 0; r < result.getLength2(); r ++) {
 				System.out.print(result.get(d, r) + " ");
 		}
 		System.out.println(" ");
@@ -178,8 +179,8 @@ class CNNTest {
 	//result = net.classify_with_GPU();
 	result = net.classify_with_CPU();
 	System.out.println("XOR:"+input.get(0, 0) +" ^ "+input. get(1, 0) );
-	for (int d = 0; d < result.length_1(); d ++) {
-		for (int r = 0; r < result.length_2(); r ++) {
+	for (int d = 0; d < result.getLength1(); d ++) {
+		for (int r = 0; r < result.getLength2(); r ++) {
 				System.out.print(result.get(d, r) + " ");
 		}
 		System.out.println(" ");
@@ -193,8 +194,8 @@ class CNNTest {
 	//result = net.classify_with_GPU();
 	result = net.classify_with_CPU();
 	System.out.println("XOR:"+input.get(0, 0) +" ^ "+input. get(1, 0) );
-	for (int d = 0; d < result.length_1(); d ++) {
-		for (int r = 0; r < result.length_2(); r ++) {
+	for (int d = 0; d < result.getLength1(); d ++) {
+		for (int r = 0; r < result.getLength2(); r ++) {
 			System.out.print(result.get(d, r) + " ");
 		}
 		System.out.println(" ");
@@ -221,7 +222,8 @@ class CNNTest {
 			assertEquals(w2.equals(s), true);
 			
 			net.setInput(input);
-			net.classify_with_GPU();
+			//net.classify_with_GPU();
+			net.classify_with_CPU();
 		} catch(Exception e) {e.printStackTrace();}		
 	}
 

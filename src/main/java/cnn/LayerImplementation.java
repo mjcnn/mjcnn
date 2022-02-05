@@ -1,4 +1,3 @@
-/* ------------------------------------------------------------------------- */
 /*   Copyright (C) 2021 Marius C. Silaghi
                 Author: Marius Silaghi: msilaghi@fit.edu
                 Florida Tech, Human Decision Support Systems Laboratory
@@ -19,36 +18,60 @@
 /* ------------------------------------------------------------------------- */
 package cnn;
 
+import cnn.util.Array2DF;
+import cnn.util.Array3DF;
+
 /**
  * 
  * @author Marius Silaghi
- * Used for standardizing raster access in two dimensional rasters represented as one vector
+ * 
+ * Interface for implementation of Layers with GPUs or CPUs
  */
-public class Field {
+public
+interface LayerImplementation {
+	boolean usesGPU();
 	/**
 	 * 
-	 * @param x
-	 * @param X: max dimension on x
-	 * @param y
-	 * @param Y: max dimension on y
-	 * @return
+	 * @return perceptrons per output pixel
 	 */
-    public static int getIndex(int x, int X, int y, int Y) {
-	assert(0<=x && x<X && 0<=y && y<Y);
-	int idx = X*y + x;
-	// System.out.println(""+x+" "+y+" -> "+idx);
-	return idx;
-    }
+	int getDepth_output();
+	
+	/**
+	 * @return
+	 * perceptrons per input pixel
+	 */
+	
+	int getDepth_input();
 
-    public static int getIndex(int x, int X, int y, int Y, int z, int Z) {
-    	if (!(0<=x && x<X && 0<=y && y<Y && 0<=z && z<Z)) {
-    		System.out.println("x="+x+"/"+X+" y="+y+"/"+Y+" z="+z+"/"+Z);
-    	}
-    	assert(0<=x && x<X && 0<=y && y<Y && 0<=z && z<Z);
-    	int idx = X*(Y*z + y)+x;
-    	// System.out.println(""+x+" "+y+" -> "+idx);
-    	return idx;
-    }
-    
+	/**
+	 *  Set the array with data with dimensions raster_size*depth
+	 * @param input
+	 */
+	void setInput(Array2DF input);
+
+	
+	/**  After depth is updated, it may need to be synchronized with GPU memory
+	 * 
+	 */
+	void update_GPU_weights();
+
+	/** Only one of the following may be implemented. 
+	 * 
+	 */
+	void convolute_with_CPU();
+
+	void convolute_with_GPU();
+
+	/** Commonly this calls one of the above two implementations, considered faster
+	 *
+	 */
+	void convolute_Default();
+	
+	public void init (
+			Array2DF input, int X_i, int Y_i, int D_i,
+			Array2DF output, int X_o, int Y_o, int D_o,
+			int x_pad, int y_pad, int stride, int dilation,
+			Filter filter[], Array2DF bias, Array3DF weights, int type, String name
+			);
+	
 }
-

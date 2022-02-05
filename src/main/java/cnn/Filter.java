@@ -19,6 +19,11 @@
 /* ------------------------------------------------------------------------- */
 package cnn;
 
+import cnn.util.Array1DF;
+import cnn.util.Array2DF;
+import cnn.util.Array2DFimp;
+import cnn.util.Array3DF;
+
 public class Filter {
     public int x_size, y_size;
     private int depth, output_layer;
@@ -142,7 +147,7 @@ public class Filter {
     
     public int getWeightsNb() {
     	if (weight == null) return 0;
-		return weight.length_2();
+		return weight.getLength2();
 	}
     
 }
