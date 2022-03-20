@@ -174,15 +174,31 @@ public class CNN {
 											
 											// TODO: Have to check what is first: X or Y!!!!
 											// TODO: could be guessed by classifying an image and its transpose
-											for (int i1 = 0; i1 < crt_fil[0].getX(); i1 ++) {
-												for (int i2 = 0; i2 < crt_fil[0].getY(); i2 ++) {
-													for (int i3 = 0; i3 < layer[crt_layer].getDepth_input(); i3 ++) {
-														for (int i4 = 0; i4 < layer[crt_layer].getDepth_output(); i4 ++) {
-															crt_fil[i4].setWeight(i1, i2, i3, data.floatArray[src++]);
+											
+											if (Config.H5_FILTERS_DIMS==Config.H5_FILTERS_X_Y_I_O) {
+												for (int i1 = 0; i1 < crt_fil[0].getX(); i1 ++) {
+													for (int i2 = 0; i2 < crt_fil[0].getY(); i2 ++) {
+														for (int i3 = 0; i3 < layer[crt_layer].getDepth_input(); i3 ++) {
+															for (int i4 = 0; i4 < layer[crt_layer].getDepth_output(); i4 ++) {
+																crt_fil[i4].setWeight(i1, i2, i3, data.floatArray[src++]);
+															}													
 														}													
-													}													
+													}
+												}											
+											}
+											
+											if (Config.H5_FILTERS_DIMS==Config.H5_FILTERS_Y_X_I_O) {
+												for (int i1 = 0; i1 < crt_fil[0].getX(); i1 ++) {
+													for (int i2 = 0; i2 < crt_fil[0].getY(); i2 ++) {
+														for (int i3 = 0; i3 < layer[crt_layer].getDepth_input(); i3 ++) {
+															for (int i4 = 0; i4 < layer[crt_layer].getDepth_output(); i4 ++) {
+																crt_fil[i4].setWeight(i1, i2, i3, data.floatArray[src++]);
+															}													
+														}													
+													}
 												}
-											}											
+											}
+											
 										}
 									}
 								}

@@ -39,6 +39,10 @@ public class Config {
     public static final boolean FLAT_INDEXES = false;
     public static final boolean FLAT_INDEXES_POOL = false; // pool perceptron use indexes for level 0
 	public static final boolean DEBUG_CPU_PERCEPTRONS = false;
+	
+	public static final int H5_FILTERS_X_Y_I_O = 1;
+	public static final int H5_FILTERS_Y_X_I_O = 2;
+	public static final int H5_FILTERS_DIMS = H5_FILTERS_X_Y_I_O;
    
 	private static int CNNtype(String type) {
 		if ("INPUT".equals(type)) return Config.INPUT;
