@@ -55,7 +55,7 @@ public class Perceptron {
     	if (init_indexes) {
 	    	for (
 	    			int y = y_center - filter.y_half_low()*(1+dilation);
-	    			y < y_center + filter.y_half_high()*(1+dilation);
+	    			y <= y_center + filter.y_half_high()*(1+dilation);
 	    			y += (1+dilation)
 	    			)
 	    	{
@@ -65,7 +65,7 @@ public class Perceptron {
 	    		
 	    		for (
 	    				int x = x_center - filter.x_half_low()*(1+dilation);
-	    				x < x_center + filter.x_half_high()*(1+dilation);
+	    				x <= x_center + filter.x_half_high()*(1+dilation);
 	    				x += (1+dilation)
 	    				)
 	    		{
